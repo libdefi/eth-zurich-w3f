@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.12;
+pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 
 contract GelatoBotNft is ERC721URIStorage, Ownable, Pausable  {
     using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
+    Counters.Counter public tokenIds;
     address public immutable gelatoMsgSender;
     string public constant notRevealedUri = "ipfs://bafyreicwi7sbomz7lu5jozgeghclhptilbvvltpxt3hbpyazz5zxvqh62m/metadata.json";
     mapping(address => bool) public hasMinted;
@@ -35,8 +35,8 @@ contract GelatoBotNft is ERC721URIStorage, Ownable, Pausable  {
 
     function mint() external {
         require(!hasMinted[msg.sender], "Already minted!");
-        _tokenIds.increment();
-        uint256 newItemId = _tokenIds.current();
+        tokenIds.increment();
+        uint256 newItemId = tokenIds.current();
         _mint(msg.sender, newItemId);
         _setTokenURI(newItemId, notRevealedUri);
         hasMinted[msg.sender] = true;

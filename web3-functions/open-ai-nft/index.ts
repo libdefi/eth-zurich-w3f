@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Web3Function, Web3FunctionContext } from "@gelatonetwork/web3-functions-sdk";
-import { Contract, constants, ethers } from "ethers";
+import { Contract, constants, ethers, BigNumber } from "ethers";
 import { Configuration, OpenAIApi } from "openai";
 import { NFTStorage, File } from "nft.storage";
 import Chance from "chance";
@@ -12,62 +12,19 @@ const NFT_ABI = [
   "event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)",
   "function revealNft(uint256 tokenId, string memory tokenURI) external",
   "function tokenURI(uint256 tokenId) public view returns (string memory) ",
+  "function tokenIds() public view returns(uint256)"
 ];
 const NOT_REVEALED_URI = "ipfs://bafyreicwi7sbomz7lu5jozgeghclhptilbvvltpxt3hbpyazz5zxvqh62m/metadata.json";
 
-async function lookUpkMintEvent(
-  lastBlock: number,
-  currentBlock: number,
-  nft: Contract,
-  provider: ethers.providers.Provider
-) {
-  let nbRequests = 0;
-  const topics = [nft.interface.getEventTopic("Transfer")];
-  // Fetch historical events in batch without exceeding runtime limits
-  while (lastBlock < currentBlock && nbRequests < MAX_REQUESTS) {
-    nbRequests++;
-    const fromBlock = lastBlock;
-    const toBlock = Math.min(fromBlock + MAX_RANGE, currentBlock);
-    try {
-      console.log(`Fetching log events from blocks ${fromBlock} to ${toBlock}`);
-      const eventFilter = { address: nft.address, topics, fromBlock, toBlock };
-      const transferLogs = await provider.getLogs(eventFilter);
-      for (const transferLog of transferLogs) {
-        const transferEvent = nft.interface.parseLog(transferLog);
-        const [from, to, tokenId] = transferEvent.args;
-        // Look up for Mint event (= Transfer event to address zero)
-        if (from === constants.AddressZero) {
-          // Check if NFT is already revelead
-          const tokenURI = await nft.tokenURI(tokenId);
-          if (tokenURI !== NOT_REVEALED_URI) {
-            console.log(`#${tokenId} already minted!`);
-            continue;
-          }
-          console.log(`New mint: #${tokenId} to ${to}`);
-          return {
-            mintEvent: transferEvent,
-            mintBlockHash: transferLog.blockHash,
-            lastProcessedBlock: transferLog.blockNumber,
-          };
-        }
-      }
-      lastBlock = toBlock;
-    } catch (err) {
-      console.error(`Rpc call failed: ${(err as Error).message}`);
-      return { lastProcessedBlock: fromBlock };
-    }
-  }
-  return { lastProcessedBlock: lastBlock };
-}
 
 function generateNftProperties(seed: string) {
   const chance = new Chance(seed);
   const place = chance.weighted(["big city", "beach marina", "ski resort"], [60, 20, 20]);
-  const outfit = chance.weighted(["none", "golden crown"], [80, 20]);
-  const accessory = chance.weighted(["smartphone", "laptop"], [80, 20]);
-  const description = `A cute robot${
+  const outfit = chance.weighted(["none", "golden crown","silver medal"], [20, 20,60]);
+  const accessory = chance.weighted(["ethereum", "bitcoin","usdc"], [80, 10,10]);
+  const description = `A cute robot ${
     outfit !== "none" ? `, wearing a ${outfit}` : ""
-  }, eating a gelato and holding a ${accessory}, with a ${place} background, at sunset, in a cyberpunk art, 3D, video game, and pastel salmon colors`;
+  }, eating an icecream with Dubai background  at sunset in a cyberpunk art, 3D, video game, and pastel salmon colors`;
   return {
     description,
     attributes: [
@@ -85,27 +42,29 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
   if (!nftAddress) throw new Error("Missing userArgs.nftAddress");
   const nft = new Contract(nftAddress as string, NFT_ABI, provider);
 
-  const currentBlock = await provider.getBlockNumber();
-  const lastBlockStr = await storage.get("lastBlockNumber");
-  const lastBlock = lastBlockStr ? parseInt(lastBlockStr) : (userArgs.genesisBlock as number);
-  console.log(`Last processed block: ${lastBlock}`);
 
-  // Retrieve new mint event
-  const { mintEvent, mintBlockHash, lastProcessedBlock } = await lookUpkMintEvent(
-    lastBlock,
-    currentBlock,
-    nft,
-    provider
-  );
 
-  if (!mintEvent || !mintBlockHash) {
-    await storage.set("lastBlockNumber", lastProcessedBlock.toString());
-    return { canExec: false, message: `No new mint (at block #${lastProcessedBlock})` };
+  const lastTokenId = parseInt((await storage.get("lastTokenId")) ?? "0");
+
+
+  let currentTokenId = await nft.tokenIds()
+
+
+  console.log("hola")
+
+
+ console.log(BigNumber.from(lastTokenId))
+  
+  if ( currentTokenId.eq(BigNumber.from(lastTokenId))) {
+    return { canExec:false, message:'No New Tokens'}
   }
 
+
+  let tokenId = lastTokenId+1;
+
   // Generate NFT properties
-  const [, , tokenId] = mintEvent.args;
-  const nftProps = generateNftProperties(`${lastProcessedBlock}_${mintBlockHash}`);
+;
+  const nftProps = generateNftProperties(`${currentTokenId}_${lastTokenId}`);
   console.log(`Open AI prompt: ${nftProps.description}`);
 
   // Generate NFT image with OpenAI (Dall-E)
@@ -132,20 +91,22 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
   const imageBlob = (await axios.get(imageUrl, { responseType: "blob" })).data;
   const nftStorageApiKey = await secrets.get("NFT_STORAGE_API_KEY");
   if (!nftStorageApiKey) throw new Error("Missing secrets.NFT_STORAGE_API_KEY");
-  const client = new NFTStorage({ token: nftStorageApiKey });
+  //const client = new NFTStorage({ token: nftStorageApiKey });
   const imageFile = new File([imageBlob], `gelato_bot_${tokenId}.png`, { type: "image/png" });
-  const metadata = await client.store({
-    name: `GelatoBot #${tokenId}`,
-    description: nftProps.description,
-    image: imageFile,
-    attributes: nftProps.attributes,
-    collection: { name: "GelatoBots", family: "gelatobots" },
-  });
-  console.log("IPFS Metadata:", metadata.url);
 
-  await storage.set("lastBlockNumber", lastProcessedBlock.toString());
+  console.log(imageFile)
+  // const metadata = await client.store({
+  //   name: `GelatoBot #${tokenId}`,
+  //   description: nftProps.description,
+  //   image: imageFile,
+  //   attributes: nftProps.attributes,
+  //   collection: { name: "GelatoBots", family: "gelatobots" },
+  // });
+ // console.log("IPFS Metadata:", metadata.url);
+
+  await storage.set("lastTokenId", tokenId.toString());
   return {
     canExec: true,
-    callData: nft.interface.encodeFunctionData("revealNft", [tokenId, metadata.url]),
+    callData: nft.interface.encodeFunctionData("revealNft", [tokenId, 'metadata.url']),
   };
 });
