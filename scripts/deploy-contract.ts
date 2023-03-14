@@ -8,14 +8,22 @@ async function main() {
 
   // Init GelatoOpsSDK
   const [signer] = await hre.ethers.getSigners();
+
+
+  
   const gelatoOps = new GelatoOpsSDK(80001, signer);
    const dedicatedMsgSender = await gelatoOps.getDedicatedMsgSender();
    console.log(`Dedicated msg.sender: ${dedicatedMsgSender.address} is deployed ${dedicatedMsgSender.isDeployed}`);
 
+   let nonce = await signer.getTransactionCount();
+
   // Deploying NFT contract
-  const nftFactory = await hre.ethers.getContractFactory("GelatoBotNft");
+  const nftFactory = await hre.ethers.getContractFactory("GelatoBotNft",signer);
   console.log("Deploying GelatoBotNft...");
-  const gelatoBotNft = await nftFactory.deploy(dedicatedMsgSender.address);
+  const gelatoBotNft = await nftFactory.deploy(dedicatedMsgSender.address,{  
+    nonce:13,
+    gasPrice:25000000000,
+    gasLimit:10000000});
   await gelatoBotNft.deployed();
 
 

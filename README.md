@@ -46,3 +46,10 @@ yarn run deploy --network goerli
 ```
 npx hardhat verify CONTRACT_ADDRESS DEDICATED_MSG_SENDER --network goerli
 ```
+```ts
+npx hardhat node --network hardhat 
+```
+
+```ts
+npx hardhat run  scripts/deploy-contract.ts
+```

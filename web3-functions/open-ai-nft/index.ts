@@ -12,25 +12,20 @@ const NFT_ABI = [
   "event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)",
   "function revealNft(uint256 tokenId, string memory tokenURI) external",
   "function tokenURI(uint256 tokenId) public view returns (string memory) ",
-  "function tokenIds() public view returns(uint256)"
+  "function tokenIds() public view returns(uint256)",
+  "function tokenIdByUser(address) public view returns(uint256)",
+  "function mint() external",
 ];
 const NOT_REVEALED_URI = "ipfs://bafyreicwi7sbomz7lu5jozgeghclhptilbvvltpxt3hbpyazz5zxvqh62m/metadata.json";
 
-
 function generateNftProperties(seed: string) {
-  const chance = new Chance(seed);
-  const place = chance.weighted(["big city", "beach marina", "ski resort"], [60, 20, 20]);
-  const outfit = chance.weighted(["none", "golden crown","silver medal"], [20, 20,60]);
-  const accessory = chance.weighted(["ethereum", "bitcoin","usdc"], [80, 10,10]);
-  const description = `A cute robot ${
-    outfit !== "none" ? `, wearing a ${outfit}` : ""
-  }, eating an icecream with Dubai background  at sunset in a cyberpunk art, 3D, video game, and pastel salmon colors`;
+  const description = `A cute robot eating an icecream with Dubai background  at sunset in a cyberpunk art, 3D, video game, and pastel salmon colors`;
   return {
     description,
     attributes: [
-      { trait_type: "Place", value: place },
-      { trait_type: "Outfit", value: outfit },
-      { trait_type: "Accessory", value: accessory },
+      { trait_type: "Place", value: "Eth Dubai" },
+      { trait_type: "Eating", value: "Gelato" },
+      { trait_type: "Powered", value: "Web 3 Functions" },
     ],
   };
 }
@@ -42,71 +37,73 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
   if (!nftAddress) throw new Error("Missing userArgs.nftAddress");
   const nft = new Contract(nftAddress as string, NFT_ABI, provider);
 
-
-
   const lastTokenId = parseInt((await storage.get("lastTokenId")) ?? "0");
 
+  let currentTokenId = await nft.tokenIds();
 
-  let currentTokenId = await nft.tokenIds()
+  if (currentTokenId.eq(BigNumber.from(lastTokenId))) {
+    return { canExec: false, message: "No New Tokens" };
+  }
 
-
-  console.log("hola")
-
-
- console.log(BigNumber.from(lastTokenId))
+  let tokenId = lastTokenId + 1;
+  const tokenURI = await nft.tokenURI(tokenId);
   
-  if ( currentTokenId.eq(BigNumber.from(lastTokenId))) {
-    return { canExec:false, message:'No New Tokens'}
-  }
+  if (tokenURI == NOT_REVEALED_URI) {
+    // Generate NFT properties
+    const nftProps = generateNftProperties(`${currentTokenId}_${lastTokenId}`);
+    console.log(`Open AI prompt: ${nftProps.description}`);
+    let timeNow = Date.now();
+    // Generate NFT image with OpenAI (Dall-E)
+    const openAiApiKey = await secrets.get("OPEN_AI_API_KEY");
+    if (!openAiApiKey) throw new Error("Missing secrets.OPEN_AI_API_KEY");
+    const openai = new OpenAIApi(new Configuration({ apiKey: openAiApiKey }));
+    let imageUrl: string;
+    try {
+      const response = await openai.createImage({
+        prompt: nftProps.description,
+        size: "512x512",
+      });
+      imageUrl = response.data.data[0].url as string;
+      console.log(`Open AI generated image: ${imageUrl}`);
+    } catch (_err) {
+      const openAiError = _err as AxiosError;
+      const errrorMessage = openAiError.response
+        ? `${openAiError.response.status}: ${openAiError.response.data}`
+        : openAiError.message;
+      return { canExec: false, message: `OpenAI error: ${errrorMessage}` };
+    }
 
+    let timeafter = Date.now();
 
-  let tokenId = lastTokenId+1;
+    console.log((timeafter - timeNow) / 1000);
+    // Publish NFT metadata on IPFS
+    const imageBlob = (await axios.get(imageUrl, { responseType: "blob" })).data;
+    const nftStorageApiKey = await secrets.get("NFT_STORAGE_API_KEY");
+    if (!nftStorageApiKey) throw new Error("Missing secrets.NFT_STORAGE_API_KEY");
+    const client = new NFTStorage({ token: nftStorageApiKey });
+    const imageFile = new File([imageBlob], `gelato_bot_${tokenId}.png`, { type: "image/png" });
+    timeafter = Date.now();
 
-  // Generate NFT properties
-;
-  const nftProps = generateNftProperties(`${currentTokenId}_${lastTokenId}`);
-  console.log(`Open AI prompt: ${nftProps.description}`);
+    console.log((timeafter - timeNow) / 1000);
 
-  // Generate NFT image with OpenAI (Dall-E)
-  const openAiApiKey = await secrets.get("OPEN_AI_API_KEY");
-  if (!openAiApiKey) throw new Error("Missing secrets.OPEN_AI_API_KEY");
-  const openai = new OpenAIApi(new Configuration({ apiKey: openAiApiKey }));
-  let imageUrl: string;
-  try {
-    const response = await openai.createImage({
-      prompt: nftProps.description,
-      size: "512x512",
+    const metadata = await client.store({
+      name: `GelatoBot #${tokenId}`,
+      description: nftProps.description,
+      image: imageFile,
+      attributes: nftProps.attributes,
+      collection: { name: "GelatoBots", family: "gelatobots" },
     });
-    imageUrl = response.data.data[0].url as string;
-    console.log(`Open AI generated image: ${imageUrl}`);
-  } catch (_err) {
-    const openAiError = _err as AxiosError;
-    const errrorMessage = openAiError.response
-      ? `${openAiError.response.status}: ${openAiError.response.data}`
-      : openAiError.message;
-    return { canExec: false, message: `OpenAI error: ${errrorMessage}` };
+    console.log("IPFS Metadata:", metadata.url);
+
+    await storage.set("lastTokenId", tokenId.toString());
+
+    return {
+      canExec: true,
+      callData: nft.interface.encodeFunctionData("revealNft", [tokenId, metadata.url]),
+    };
+  } else {
+    console.log(`#${tokenId} already minted!`);
+    await storage.set("lastTokenId", tokenId.toString());
+    return { canExec: false, message: "Token already Minted" };
   }
-
-  // Publish NFT metadata on IPFS
-  const imageBlob = (await axios.get(imageUrl, { responseType: "blob" })).data;
-  const nftStorageApiKey = await secrets.get("NFT_STORAGE_API_KEY");
-  if (!nftStorageApiKey) throw new Error("Missing secrets.NFT_STORAGE_API_KEY");
-  //const client = new NFTStorage({ token: nftStorageApiKey });
-  const imageFile = new File([imageBlob], `gelato_bot_${tokenId}.png`, { type: "image/png" });
-
-  console.log(imageFile)
-  // const metadata = await client.store({
-  //   name: `GelatoBot #${tokenId}`,
-  //   description: nftProps.description,
-  //   image: imageFile,
-  //   attributes: nftProps.attributes,
-  //   collection: { name: "GelatoBots", family: "gelatobots" },
-  // });
- // console.log("IPFS Metadata:", metadata.url);
-
-  await storage.set("lastTokenId", tokenId.toString());
-  return {
-    canExec: true,
-    callData: nft.interface.encodeFunctionData("revealNft", [tokenId, 'metadata.url']),
-  };
 });

@@ -11,6 +11,6 @@
     "outDir": "dist"
   },
   "files": ["hardhat.config.ts"],
-  "include": ["scripts", "web3-functions"],
+  "include": ["scripts", "web3-functions", "tasks"],
   "exclude": ["node_modules"]
 }

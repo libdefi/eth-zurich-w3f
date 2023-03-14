@@ -4,8 +4,8 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-etherscan";
-// import 'hardhat-deploy';
-
+import { resolve} from 'path';
+import * as glob from 'glob';
 require('hardhat-contract-sizer');
 
 // Process Env Variables
@@ -17,14 +17,17 @@ const ALCHEMY_ID = process.env.ALCHEMY_ID;
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY;
 
-
+glob.sync('./tasks/**/*.ts').forEach(function (file: any) {
+  require(resolve(file));
+});
 
 const config: HardhatUserConfig = {
-  defaultNetwork: "localhost",
+  defaultNetwork: "mumbai",
   etherscan: {
     apiKey: {
       goerli: ETHERSCAN_API_KEY ?? "",
       polygon: POLYGONSCAN_API_KEY ?? "",
+      polygonMumbai: POLYGONSCAN_API_KEY ?? "",
     },
   },
   networks: {

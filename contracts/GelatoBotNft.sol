@@ -12,7 +12,7 @@ contract GelatoBotNft is ERC721URIStorage, Ownable, Pausable  {
     address public immutable gelatoMsgSender;
     string public constant notRevealedUri = "ipfs://bafyreicwi7sbomz7lu5jozgeghclhptilbvvltpxt3hbpyazz5zxvqh62m/metadata.json";
     mapping(address => bool) public hasMinted;
-
+    mapping(address => uint256) public tokenIdByUser;
     event MetadataUpdate(uint256 _tokenId);
 
 
@@ -40,6 +40,8 @@ contract GelatoBotNft is ERC721URIStorage, Ownable, Pausable  {
         _mint(msg.sender, newItemId);
         _setTokenURI(newItemId, notRevealedUri);
         hasMinted[msg.sender] = true;
+        tokenIdByUser[msg.sender] = newItemId;
+
     }
 
     function revealNft(uint256 tokenId, string memory tokenURI) external onlyGelatoMsgSender {
