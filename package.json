@@ -45,11 +45,9 @@
     "@gelatonetwork/ops-sdk": "^2.2.0-alpha",
     "@gelatonetwork/web3-functions-sdk": "^0.4.3",
     "axios": "^1.3.2",
-    "chance": "^1.1.9",
     "hardhat-deploy": "^0.11.25",
     "ky": "^0.33.2",
     "nft.storage": "^7.0.0",
     "openai": "^3.1.0",
-    "web3.storage": "^4.5.4"
   }
 }
