@@ -15,6 +15,7 @@ const NFT_ABI = [
   "function tokenIds() public view returns(uint256)",
   "function tokenIdByUser(address) public view returns(uint256)",
   "function mint() external",
+  "event MintEvent(uint256 _tokenId)"
 ];
 const NOT_REVEALED_URI = "ipfs://bafyreicwi7sbomz7lu5jozgeghclhptilbvvltpxt3hbpyazz5zxvqh62m/metadata.json";
 
@@ -87,11 +88,11 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
     console.log((timeafter - timeNow) / 1000);
 
     const metadata = await client.store({
-      name: `GelatoBot #${tokenId}`,
+      name: `Eth Dubai GelatoBot #${tokenId}`,
       description: nftProps.description,
       image: imageFile,
       attributes: nftProps.attributes,
-      collection: { name: "GelatoBots", family: "gelatobots" },
+      collection: { name: "EthDubai-GelatoBots", family: "ethdubai-gelatobots" },
     });
     console.log("IPFS Metadata:", metadata.url);
 

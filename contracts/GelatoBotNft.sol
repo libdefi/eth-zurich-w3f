@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
-contract GelatoBotNft is ERC721URIStorage, Ownable, Pausable  {
+contract EthDubaiGelatoBotNft is ERC721URIStorage, Ownable, Pausable  {
     using Counters for Counters.Counter;
     Counters.Counter public tokenIds;
     address public immutable gelatoMsgSender;
@@ -14,9 +14,9 @@ contract GelatoBotNft is ERC721URIStorage, Ownable, Pausable  {
     mapping(address => bool) public hasMinted;
     mapping(address => uint256) public tokenIdByUser;
     event MetadataUpdate(uint256 _tokenId);
+    event MintEvent(uint256 _tokenId);
 
-
-    constructor(address _gelatoMsgSender) ERC721("Gelato Bots", "GEL-BOT") {
+    constructor(address _gelatoMsgSender) ERC721("ETH Dubai Gelato Bots", "DUB-GEL-BOT") {
         gelatoMsgSender = _gelatoMsgSender;
     }
 
@@ -41,6 +41,7 @@ contract GelatoBotNft is ERC721URIStorage, Ownable, Pausable  {
         _setTokenURI(newItemId, notRevealedUri);
         hasMinted[msg.sender] = true;
         tokenIdByUser[msg.sender] = newItemId;
+        emit MintEvent(newItemId);
 
     }
 
