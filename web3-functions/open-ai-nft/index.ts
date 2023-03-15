@@ -21,7 +21,7 @@ const NFT_ABI = [
 const NOT_REVEALED_URI = "ipfs://bafyreicwi7sbomz7lu5jozgeghclhptilbvvltpxt3hbpyazz5zxvqh62m/metadata.json";
 
 function generateNftProperties(seed: string, isNight:boolean) {
-   const timeSelected = isNight ? 'at night' : 'at unset';
+   const timeSelected = isNight ? 'at night' : 'at sunset';
 
 
 
