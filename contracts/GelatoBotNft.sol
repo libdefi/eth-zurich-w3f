@@ -13,6 +13,7 @@ contract EthDubaiGelatoBotNft is ERC721URIStorage, Ownable, Pausable  {
     string public constant notRevealedUri = "ipfs://bafyreicwi7sbomz7lu5jozgeghclhptilbvvltpxt3hbpyazz5zxvqh62m/metadata.json";
     mapping(address => bool) public hasMinted;
     mapping(address => uint256) public tokenIdByUser;
+    mapping(uint256 => bool) public nightTimeByToken;
     event MetadataUpdate(uint256 _tokenId);
     event MintEvent(uint256 _tokenId);
 
@@ -33,7 +34,7 @@ contract EthDubaiGelatoBotNft is ERC721URIStorage, Ownable, Pausable  {
         _unpause();
     }
 
-    function mint() external {
+    function mint(bool _isNight) external {
         require(!hasMinted[msg.sender], "Already minted!");
         tokenIds.increment();
         uint256 newItemId = tokenIds.current();
@@ -41,6 +42,7 @@ contract EthDubaiGelatoBotNft is ERC721URIStorage, Ownable, Pausable  {
         _setTokenURI(newItemId, notRevealedUri);
         hasMinted[msg.sender] = true;
         tokenIdByUser[msg.sender] = newItemId;
+        nightTimeByToken[newItemId] = _isNight;
         emit MintEvent(newItemId);
 
     }

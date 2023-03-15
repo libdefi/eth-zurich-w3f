@@ -14,13 +14,18 @@ const NFT_ABI = [
   "function tokenURI(uint256 tokenId) public view returns (string memory) ",
   "function tokenIds() public view returns(uint256)",
   "function tokenIdByUser(address) public view returns(uint256)",
-  "function mint() external",
+  "function nightTimeByToken(uint256) public view returns(bool)",
+  "function mint(bool _isNight) external",
   "event MintEvent(uint256 _tokenId)"
 ];
 const NOT_REVEALED_URI = "ipfs://bafyreicwi7sbomz7lu5jozgeghclhptilbvvltpxt3hbpyazz5zxvqh62m/metadata.json";
 
-function generateNftProperties(seed: string) {
-  const description = `A cute robot eating an icecream with Dubai background  at sunset in a cyberpunk art, 3D, video game, and pastel salmon colors`;
+function generateNftProperties(seed: string, isNight:boolean) {
+   const timeSelected = isNight ? 'at night' : 'at unset';
+
+
+
+  const description = `A cute robot eating an icecream with Dubai background ${timeSelected} in a cyberpunk art, 3D, video game, and pastel salmon colors`;
   return {
     description,
     attributes: [
@@ -48,10 +53,11 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
 
   let tokenId = lastTokenId + 1;
   const tokenURI = await nft.tokenURI(tokenId);
-  
+  const isNight = await nft.nightTimeByToken(tokenId);
+
   if (tokenURI == NOT_REVEALED_URI) {
     // Generate NFT properties
-    const nftProps = generateNftProperties(`${currentTokenId}_${lastTokenId}`);
+    const nftProps = generateNftProperties(`${currentTokenId}_${lastTokenId}`,isNight);
     console.log(`Open AI prompt: ${nftProps.description}`);
     let timeNow = Date.now();
     // Generate NFT image with OpenAI (Dall-E)

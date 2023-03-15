@@ -66,7 +66,7 @@ const config: HardhatUserConfig = {
     },
     mumbai: {
       url:`https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_ID}`,
-      gasPrice: 1000000000,
+ 
       chainId:80001,
       accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
     },
