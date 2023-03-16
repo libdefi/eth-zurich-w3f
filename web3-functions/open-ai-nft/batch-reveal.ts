@@ -54,7 +54,7 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
     return { canExec: false, message: "No New Tokens" };
   }
 
-  // Get up to 10 next token ids to process in parallel
+  // Get batch of next token ids to process in parallel
   const tokenIds: number[] = [];
   let tokenId = lastProcessedId;
   let nbRpcCalls = 0;
