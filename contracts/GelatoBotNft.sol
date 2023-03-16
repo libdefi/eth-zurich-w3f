@@ -34,7 +34,7 @@ contract EthDubaiGelatoBotNft is ERC721URIStorage, Ownable, Pausable  {
         _unpause();
     }
 
-    function mint(bool _isNight) external {
+    function mint(bool _isNight) external whenNotPaused {
         require(!hasMinted[msg.sender], "Already minted!");
         tokenIds.increment();
         uint256 newItemId = tokenIds.current();
