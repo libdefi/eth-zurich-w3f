@@ -48,6 +48,6 @@
     "hardhat-deploy": "^0.11.25",
     "ky": "^0.33.2",
     "nft.storage": "^7.0.0",
-    "openai": "^3.1.0",
+    "openai": "^3.1.0"
   }
 }
