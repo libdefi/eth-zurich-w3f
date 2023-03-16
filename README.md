@@ -1,4 +1,4 @@
-# Gelato Bots NFT
+# EthDubai Gelato Bots NFT
 
 ## Summary
 
@@ -8,16 +8,11 @@ NFT powered by Open AI & Web3 functions:
 - The NFT pic is published on IPFS and revealed on-chain via Gelato Automate
 
 ## Demo
-- Goerli:
-  - Smart Contract: https://goerli.etherscan.io/address/0x83503675b4dc70321db99b62170507434c4d3d06
-  - Web3 Function: https://beta.app.gelato.network/task/0x11a0ee49fb1dceea11434d9841866352c2c1cb9ea9625906775412c5f1656de7?chainId=5 
-  - Open Sea NFTs: https://testnets.opensea.io/collection/gelato-bots
-  - LooksRare NFT collection: https://goerli.looksrare.org/collections/0x83503675b4dC70321DB99b62170507434C4D3d06
-
 - Polygon:
-  - Smart Contract: https://polygonscan.com/address/0x179c72ebca26b4e46ad7d570a1304a12462d9564
-  - Web3 Function: https://beta.app.gelato.network/task/0x2dc6aed9ad087c0a092420da8813757fab3d16352b0587bf3179fc4eeb100a36?chainId=137
-  - Open Sea NFTs: https://opensea.io/collection/gelato-bots
+  - Mint website: https://eth-dubai-nft.web.app/ 
+  - Smart Contract: https://polygonscan.com/address/0xd47c74228038e8542a38e3e7fb1f4a44121ee14e
+  - Web3 Function: https://beta.app.gelato.network/task/0xce305033e53322a7e32f58b429ce0ff9a8c314b2163851dd12a75e5a4ed1e85e?chainId=137
+  - Open Sea NFTs: https://opensea.io/collection/eth-dubai-gelato-bots-1
 
 ## How to run
 
@@ -32,9 +27,9 @@ cp .env.example .env
 ```
 You will need to create free accounts and get Api Keys from [OpenAI](https://platform.openai.com/) and [Nft.Storage](https://nft.storage/)
 
-3. Test the Open AI NFT web3 function on goerli:
+3. Test the Open AI NFT web3 function on polygon:
 ```
-npx w3f test web3-functions/open-ai-nft/index.ts --show-logs --user-args=nftAddress:0x83503675b4dc70321db99b62170507434c4d3d06 --user-args=genesisBlock:8550000
+npx w3f test web3-functions/open-ai-nft/index.ts --show-logs --user-args=nftAddress:0xd47c74228038e8542a38e3e7fb1f4a44121ee14e
 ```
 
 ## Deploy your smart contract and web3 function
