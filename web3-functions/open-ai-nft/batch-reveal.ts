@@ -98,9 +98,9 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
       } catch (_err) {
         const openAiError = _err as AxiosError;
         const errrorMessage = openAiError.response
-          ? `${openAiError.response.status}: ${openAiError.response.data}`
+          ? `${openAiError.response.status}: ${(openAiError.response.data as any)?.error?.code}`
           : openAiError.message;
-        return { canExec: false, message: `OpenAI error: ${errrorMessage}` };
+        throw new Error(`OpenAI error: ${errrorMessage}`);
       }
 
       // Publish NFT metadata on IPFS
