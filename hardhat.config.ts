@@ -22,7 +22,7 @@ glob.sync('./tasks/**/*.ts').forEach(function (file: any) {
 });
 
 const config: HardhatUserConfig = {
-  defaultNetwork: "matic",
+  defaultNetwork: "mumbai",
   etherscan: {
     apiKey: {
       goerli: ETHERSCAN_API_KEY ?? "",

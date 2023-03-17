@@ -16,8 +16,8 @@ async function main() {
     "function mint(bool _isNight) external"
   ];
 
-  let nftAddress = "0ef77b8c3A3F82fe88833f801d3A67468C1ebC08";
-
+  let nftAddress = "0xFA342844aE9039E0811bA3BD62BF0Ffd04c97e28"; //0xe121858e944c59adac681df6c62d13c4b27d8946 //0x288a462c1d2403b86ed2c2f6c51d3b41a794dc54
+// https://polygonscan.com/address/0xd47c74228038e8542a38e3e7fb1f4a44121ee14e
   const [signer] = await hre.ethers.getSigners();
   const nft = new Contract(nftAddress as string, NFT_ABI, signer);
 
