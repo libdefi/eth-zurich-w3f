@@ -29,7 +29,7 @@ You will need to create free accounts and get Api Keys from [OpenAI](https://pla
 
 3. Test the Open AI NFT web3 function on polygon:
 ```
-npx w3f test web3-functions/open-ai-nft/index.ts --show-logs --user-args=nftAddress:0xd47c74228038e8542a38e3e7fb1f4a44121ee14e
+npx w3f test web3-functions/open-ai-nft/index.ts --show-logs --user-args=nftAddress:0x5041c60C75633F29DEb2AED79cB0A9ed79202415
 ```
 
 ## Deploy your smart contract and web3 function
