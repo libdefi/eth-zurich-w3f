@@ -19,7 +19,7 @@ async function main() {
    let nonce = await signer.getTransactionCount();
 
   // Deploying NFT contract
-  const nftFactory = await hre.ethers.getContractFactory("EthDubaiGelatoBotNft",signer);
+  const nftFactory = await hre.ethers.getContractFactory("EthZurichGelatoBotNft",signer);
   console.log("Deploying GelatoBotNft...");
   const gelatoBotNft = await nftFactory.deploy(dedicatedMsgSender.address,{  
     nonce,

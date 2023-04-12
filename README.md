@@ -1,4 +1,4 @@
-# EthDubai Gelato Bots NFT
+# EthZurich Gelato Bots NFT
 
 ## Summary
 
@@ -9,10 +9,10 @@ NFT powered by Open AI & Web3 functions:
 
 ## Demo
 - Polygon:
-  - Mint website: https://eth-dubai-nft.web.app/ 
-  - Smart Contract: https://polygonscan.com/address/0xd47c74228038e8542a38e3e7fb1f4a44121ee14e
-  - Web3 Function: https://beta.app.gelato.network/task/0xce305033e53322a7e32f58b429ce0ff9a8c314b2163851dd12a75e5a4ed1e85e?chainId=137
-  - Open Sea NFTs: https://opensea.io/collection/eth-dubai-gelato-bots-1
+  - Mint website: https://eth-zurich-nft.web.app/ 
+  - Smart Contract: https://polygonscan.com/address/0x5041c60C75633F29DEb2AED79cB0A9ed79202415
+  - Web3 Function: https://beta.app.gelato.network/task/0x6e9ee6b129c9f58dd46c77808c9451c18bc80b9bd1ef87313e8c37ae22639cbb?chainId=137
+  - Open Sea NFTs: https://opensea.io/collection/eth-zurich-gelato-bots
 
 ## How to run
 
