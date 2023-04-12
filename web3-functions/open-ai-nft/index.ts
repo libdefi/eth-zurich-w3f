@@ -35,11 +35,24 @@ function generateNftProperties(isNight: boolean) {
 Web3Function.onRun(async (context: Web3FunctionContext) => {
   const { userArgs, storage, secrets, provider } = context;
 
+  ////// User Arguments
   const nftAddress = userArgs.nftAddress;
-  if (!nftAddress) throw new Error("Missing userArgs.nftAddress");
+  if (!nftAddress) throw new Error("Missing userArgs.nftAddress please provide");
+
+  ////// User Secrets
+  const nftStorageApiKey = await secrets.get("NFT_STORAGE_API_KEY");
+  if (!nftStorageApiKey) throw new Error("Missing secrets.NFT_STORAGE_API_KEY");
+
+  const openAiApiKey = await secrets.get("OPEN_AI_API_KEY");
+  if (!openAiApiKey) throw new Error("Missing secrets.OPEN_AI_API_KEY");
+
+ ////// User Storage
+  const lastProcessedId = parseInt((await storage.get("lastProcessedId")) ?? "0");
+
+
   const nft = new Contract(nftAddress as string, NFT_ABI, provider);
 
-  const lastProcessedId = parseInt((await storage.get("lastProcessedId")) ?? "0");
+
   const currentTokenId = await nft.tokenIds();
   if (currentTokenId.eq(BigNumber.from(lastProcessedId))) {
     return { canExec: false, message: "No New Tokens" };
@@ -54,8 +67,7 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
     console.log(`Open AI prompt: ${nftProps.description}`);
 
     // Generate NFT image with OpenAI (Dall-E)
-    const openAiApiKey = await secrets.get("OPEN_AI_API_KEY");
-    if (!openAiApiKey) throw new Error("Missing secrets.OPEN_AI_API_KEY");
+
     const openai = new OpenAIApi(new Configuration({ apiKey: openAiApiKey }));
     let imageUrl: string;
     try {
@@ -75,8 +87,7 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
 
     // Publish NFT metadata on IPFS
     const imageBlob = (await axios.get(imageUrl, { responseType: "blob" })).data;
-    const nftStorageApiKey = await secrets.get("NFT_STORAGE_API_KEY");
-    if (!nftStorageApiKey) throw new Error("Missing secrets.NFT_STORAGE_API_KEY");
+ 
     const client = new NFTStorage({ token: nftStorageApiKey });
     const imageFile = new File([imageBlob], `gelato_bot_${tokenId}.png`, { type: "image/png" });
 
