@@ -16,7 +16,7 @@ const NFT_ABI = [
   "event MintEvent(uint256 _tokenId)",
 ];
 const PROXY_ABI = ["function batchExecuteCall(address[] _targets, bytes[] _datas, uint256[] _values) payable"];
-const NOT_REVEALED_URI = "ipfs://bafybeihvxwkg4u452vgzwfmkau5f4uokw7bvbjdqaxfzteqf4glsn6q3ra/metadata.json";
+const NOT_REVEALED_URI = "ipfs://bafyreicwi7sbomz7lu5jozgeghclhptilbvvltpxt3hbpyazz5zxvqh62m/metadata.json";
 
 function generateNftProperties(isNight: boolean) {
   const timeSelected = isNight ? "at night" : "at sunset";
