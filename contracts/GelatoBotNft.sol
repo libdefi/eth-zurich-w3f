@@ -10,7 +10,7 @@ contract EthZurichGelatoBotNft is ERC721URIStorage, Ownable, Pausable  {
     using Counters for Counters.Counter;
     Counters.Counter public tokenIds;
     address public immutable gelatoMsgSender;
-    string public constant notRevealedUri = "ipfs://bafyreicwi7sbomz7lu5jozgeghclhptilbvvltpxt3hbpyazz5zxvqh62m/metadata.json";
+    string public constant notRevealedUri = "ipfs://bafybeihvxwkg4u452vgzwfmkau5f4uokw7bvbjdqaxfzteqf4glsn6q3ra/metadata.json";
     mapping(address => bool) public hasMinted;
     mapping(address => uint256) public tokenIdByUser;
     mapping(uint256 => bool) public nightTimeByToken;
