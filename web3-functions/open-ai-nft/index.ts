@@ -92,11 +92,11 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
     const imageFile = new File([imageBlob], `gelato_bot_${tokenId}.png`, { type: "image/png" });
 
     const metadata = await client.store({
-      name: `Eth Zurich GelatoBot #${tokenId}`,
+      name: `ETHGlobal Tokyo Bot#${tokenId}`,
       description: nftProps.description,
       image: imageFile,
       attributes: nftProps.attributes,
-      collection: { name: "EthZurich-GelatoBots", family: "ethzurich-gelatobots" },
+      collection: { name: "EthGlobalTokyo-Bots", family: "ethglobaltokyo-bots" },
     });
     console.log("IPFS Metadata:", metadata.url);
 
