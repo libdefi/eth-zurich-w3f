@@ -62,7 +62,7 @@ const config: HardhatUserConfig = {
     polygon: {
       chainId: 137,
       accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
-      url: `https://polygon-mainnet.g.alchemy.com/v2/HF4Mmimsk9XWO446jjrFyt2xEzXier-f`,
+      url: `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_ID}`,
     },
     mumbai: {
       url:`https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_ID}`,

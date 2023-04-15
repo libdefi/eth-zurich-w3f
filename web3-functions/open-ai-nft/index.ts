@@ -15,19 +15,19 @@ const NFT_ABI = [
   "function mint(bool _isNight) external",
   "event MintEvent(uint256 _tokenId)",
 ];
-const NOT_REVEALED_URI = "ipfs://bafyreicwi7sbomz7lu5jozgeghclhptilbvvltpxt3hbpyazz5zxvqh62m/metadata.json";
+const NOT_REVEALED_URI = "ipfs://bafybeigfcu57orxvt2fyn7gku5c27e7ama6yxmk5tq6xjqkfjptaxfmici/metadata.json";
 
 function generateNftProperties(isNight: boolean) {
   const timeSelected = isNight ? "at night" : "at sunset";
 
-  const description = `A cute robot eating an icecream with Zurich background ${timeSelected} in a cyberpunk art, 3D, video game, and pastel salmon colors`;
+  const description = `Spectacular Background of Tokyo in Spring ${timeSelected} in a cyberpunk art, 3D, video game, and pastel salmon colors`;
   return {
     description,
     attributes: [
       { trait_type: "Time", value: timeSelected },
-      { trait_type: "Place", value: "Eth Zurich" },
-      { trait_type: "Eating", value: "Gelato" },
-      { trait_type: "Powered", value: "Web 3 Functions" },
+      { trait_type: "Place", value: "Tokyo" },
+      { trait_type: "Eating", value: "Ramen" },
+      { trait_type: "Powered", value: "Web3" },
     ],
   };
 }
@@ -92,11 +92,11 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
     const imageFile = new File([imageBlob], `gelato_bot_${tokenId}.png`, { type: "image/png" });
 
     const metadata = await client.store({
-      name: `Eth Zurich GelatoBot #${tokenId}`,
+      name: `ETHGlobal Tokyo Bot#${tokenId}`,
       description: nftProps.description,
       image: imageFile,
       attributes: nftProps.attributes,
-      collection: { name: "EthZurich-GelatoBots", family: "ethzurich-gelatobots" },
+      collection: { name: "EthGlobalTokyo-Bots", family: "ethglobaltokyo-bots" },
     });
     console.log("IPFS Metadata:", metadata.url);
 

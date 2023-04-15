@@ -14,7 +14,7 @@ async function main() {
   console.log(`Dedicated msg.sender: ${dedicatedMsgSender.address}`);
 
  
-  let iface = (await hre.ethers.getContractFactory("GelatoBotNft")).interface;
+  let iface = (await hre.ethers.getContractFactory("EthGlobalTokyoBotNft")).interface;
   let cid= ""
   let execAbi=""
   let execAddress =""
