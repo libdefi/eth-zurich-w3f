@@ -6,11 +6,12 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
-contract EthZurichGelatoBotNft is ERC721URIStorage, Ownable, Pausable  {
+contract EthGlobalTokyoBotNft is ERC721URIStorage, Ownable, Pausable {
     using Counters for Counters.Counter;
     Counters.Counter public tokenIds;
     address public immutable gelatoMsgSender;
-    string public constant notRevealedUri = "ipfs://bafybeihvxwkg4u452vgzwfmkau5f4uokw7bvbjdqaxfzteqf4glsn6q3ra/metadata.json";
+    string public constant notRevealedUri =
+        "ipfs://bafybeihvxwkg4u452vgzwfmkau5f4uokw7bvbjdqaxfzteqf4glsn6q3ra/metadata.json";
     mapping(address => bool) public hasMinted;
     mapping(address => uint256) public tokenIdByUser;
     mapping(uint256 => bool) public nightTimeByToken;
@@ -44,12 +45,10 @@ contract EthZurichGelatoBotNft is ERC721URIStorage, Ownable, Pausable  {
         tokenIdByUser[msg.sender] = newItemId;
         nightTimeByToken[newItemId] = _isNight;
         emit MintEvent(newItemId);
-
     }
 
     function revealNft(uint256 tokenId, string memory tokenURI) external onlyGelatoMsgSender {
         _setTokenURI(tokenId, tokenURI);
         emit MetadataUpdate(tokenId);
     }
-
 }
